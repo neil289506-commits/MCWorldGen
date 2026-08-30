@@ -64,16 +64,7 @@ cmake --build build --config Release
   需確保執行環境已安裝 Python 3 與 `requests` 套件（`pip install requests`）。
   Paper 版本清單不受此限制，直接用 Qt 的 `QNetworkAccessManager` 查詢。
 
-## 尚待補完 / 需要依實際環境確認的部分
 
-1. **QuaZip API 對應**：`ExportPackager` 使用的 `QuaZipFile::open(..., method, level)` 簽名
-   與 BZIP2 method 代碼（12）需對照實際安裝的 QuaZip 版本標頭確認；參考專案本身的
-   `BackupManager` 只用了預設的 deflate 壓縮，並未驗證過 BZIP2 method，這部分屬於本專案
-   依需求新增、尚未實機測試過的部分，建議先用小檔案測試壓縮/解壓縮往返是否正常。
-2. **Fabric/Quilt installer 版本寫死**：`fabric-installer-1.0.1.jar` 沿用參考專案原本寫死的版本號，
-   若之後失效可能需要改成動態查詢最新 installer 版本。
-3. **世界大小預生成**：目前只靠伺服器自然啟動時的初始 chunk 生成，若需要「指定半徑完整預生成」，
-   可考慮整合 Chunky（Fabric/Forge mod），並在 `PreGenRunner` 中改為送出
    `chunky radius <n>` / `chunky start` 等指令，再監聽其完成訊息。
 4. **NeoForge 新舊式判斷**：目前假設 NeoForge 支援的版本皆為新式 `run.bat/run.sh` 安裝
    （因為 NeoForge 本身只支援 1.20.1 之後的版本），若未來版本範圍改變需重新確認。
