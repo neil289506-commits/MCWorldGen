@@ -6,6 +6,20 @@
 #  include <windows.h>
 #endif
 
+namespace {
+
+QString quoteCommandArg(const QString &value)
+{
+    const QString trimmed = value.trimmed();
+    if (trimmed.isEmpty())
+        return trimmed;
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.size() >= 2)
+        return trimmed;
+    return trimmed.contains(' ') ? QString("\"") + trimmed + QString("\"") : trimmed;
+}
+
+} // namespace
+
 PreGenRunner::PreGenRunner(QObject *parent) : QObject(parent)
 {
 }
@@ -49,8 +63,9 @@ void PreGenRunner::start(const WorldGenConfig &config, const LaunchSpec &spec)
     connect(m_process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             this, &PreGenRunner::onProcessFinished);
 
+    const QString programDisplay = quoteCommandArg(spec.program);
     emit consoleLine(QStringLiteral(">>> 啟動預生成程序：%1 %2")
-                      .arg(spec.program, spec.arguments.join(' ')));
+                      .arg(programDisplay, spec.arguments.join(' ')));
 
     m_process->start(spec.program, spec.arguments);
 

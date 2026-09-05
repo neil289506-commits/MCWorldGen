@@ -10,6 +10,28 @@
 #  include <windows.h>
 #endif
 
+namespace {
+
+QString normalizeJavaExecutable(const QString &value)
+{
+    QString result = value.trimmed();
+    if (result.startsWith('"') && result.endsWith('"') && result.size() >= 2)
+        result = result.mid(1, result.size() - 2).trimmed();
+    return result;
+}
+
+QString quoteCommandArg(const QString &value)
+{
+    QString trimmed = value.trimmed();
+    if (trimmed.isEmpty())
+        return trimmed;
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.size() >= 2)
+        return trimmed;
+    return trimmed.contains(' ') ? QString("\"") + trimmed + QString("\"") : trimmed;
+}
+
+} // namespace
+
 ServerCoreInstaller::ServerCoreInstaller(QObject *parent)
     : QObject(parent), m_nam(new QNetworkAccessManager(this))
 {
@@ -117,11 +139,12 @@ void ServerCoreInstaller::runInstallerJar(const QString &jarPath, const QStringL
                                            std::function<void(bool)> onFinished)
 {
     m_processCallback = onFinished;
-    QString java = m_config.javaExecutable.isEmpty() ? "java" : m_config.javaExecutable;
+    QString java = normalizeJavaExecutable(m_config.javaExecutable);
+    if (java.isEmpty()) java = QStringLiteral("java");
     QStringList args;
     args << "-Dfile.encoding=UTF-8" << "-jar" << jarPath << extraArgs;
 
-    emit progressMessage("執行：" + java + " " + args.join(' '));
+    emit progressMessage("執行：" + quoteCommandArg(java) + " " + args.join(' '));
     emit progressPercent(-1);
 
     m_process = new QProcess(this);
@@ -154,7 +177,8 @@ LaunchSpec ServerCoreInstaller::resolveLaunchSpec(bool forgeNewStyle) const
 {
     LaunchSpec spec;
     spec.workingDir = m_installDir;
-    const QString java = m_config.javaExecutable.isEmpty() ? "java" : m_config.javaExecutable;
+    QString java = normalizeJavaExecutable(m_config.javaExecutable);
+    if (java.isEmpty()) java = QStringLiteral("java");
     const QString xmx = QString("-Xmx%1M").arg(m_config.maxMemoryMB);
 
     switch (m_config.loader) {

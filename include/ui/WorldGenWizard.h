@@ -89,7 +89,7 @@ public:
     bool isComplete() const override { return m_finished; }
 
 signals:
-    void requestRun(const QString &exportPath);
+    void requestRun(const QString &exportPath, const QString &javaExecutable);
 
 private:
     ConsoleWidget *m_console;
@@ -97,6 +97,7 @@ private:
     QProgressBar *m_totalProgressBar; // 總進度：依 6 個步驟換算百分比
     QLabel *m_stageLabel;
     QLineEdit *m_exportPathEdit;
+    QLineEdit *m_javaExecutableEdit;
     bool m_finished = false;
 
 public slots:
@@ -119,5 +120,5 @@ private:
     AssetsPage *m_assetsPage;
     RunExportPage *m_runExportPage;
 
-    void startPipeline(const QString &exportPath);
+    void startPipeline(const QString &exportPath, const QString &javaExecutable);
 };

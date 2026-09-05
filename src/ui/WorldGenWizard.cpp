@@ -6,6 +6,47 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QLabel>
+#include <QDirIterator>
+#include <QFileInfo>
+
+namespace {
+
+QString quoteCommandArg(const QString &value)
+{
+    if (value.isEmpty())
+        return value;
+    const QString trimmed = value.trimmed();
+    if (trimmed.startsWith('"') && trimmed.endsWith('"') && trimmed.size() >= 2)
+        return trimmed;
+    return trimmed.contains(' ') ? QString("\"") + trimmed + QString("\"") : trimmed;
+}
+
+QString defaultJavaExecutable()
+{
+    const QStringList roots = {
+        QStringLiteral("C:/Program Files/Java"),
+        QStringLiteral("C:/Program Files (x86)/Java")
+    };
+
+    for (const QString &root : roots) {
+        QDir dir(root);
+        if (!dir.exists())
+            continue;
+
+        QDirIterator it(root, QDir::Files | QDir::NoSymLinks, QDirIterator::Subdirectories);
+        while (it.hasNext()) {
+            const QString path = it.next();
+            const QString fileName = QFileInfo(path).fileName();
+            if (fileName.compare(QStringLiteral("java.exe"), Qt::CaseInsensitive) == 0)
+                return path;
+            if (fileName.compare(QStringLiteral("java"), Qt::CaseInsensitive) == 0)
+                return path;
+        }
+    }
+    return QStringLiteral("java");
+}
+
+} // namespace
 
 // ---------------- LoaderPage ----------------
 
@@ -270,17 +311,54 @@ RunExportPage::RunExportPage(QWidget *parent) : QWizardPage(parent)
         if (!path.isEmpty()) m_exportPathEdit->setText(path);
     });
 
+    m_javaExecutableEdit = new QLineEdit;
+    const QString defaultJava = defaultJavaExecutable();
+    if (defaultJava != QStringLiteral("java"))
+        m_javaExecutableEdit->setText(defaultJava);
+    else
+        m_javaExecutableEdit->setPlaceholderText(QStringLiteral("例如：C:/Program Files/Java/jre/bin/java.exe"));
+
+    auto *javaBrowseBtn = new QPushButton(QStringLiteral("選擇 Java…"));
+    connect(javaBrowseBtn, &QPushButton::clicked, this, [this]() {
+        const QString prev = m_javaExecutableEdit->text().trimmed();
+        const QString initialDir = !prev.isEmpty() ? QFileInfo(prev).absolutePath() : QStringLiteral("C:/Program Files/Java");
+        const QString javaPath = QFileDialog::getOpenFileName(this,
+                                                              QStringLiteral("選擇 Java 執行檔"),
+                                                              initialDir,
+                                                              QStringLiteral("java.exe (java.exe);;所有檔案 (*.*)"));
+        if (!javaPath.isEmpty())
+            m_javaExecutableEdit->setText(javaPath);
+    });
+
     auto *startBtn = new QPushButton(QStringLiteral("開始執行"));
     startBtn->setObjectName("primaryButton");
     connect(startBtn, &QPushButton::clicked, this, [this, startBtn]() {
         if (m_exportPathEdit->text().isEmpty()) return;
+
+        QString javaPath = m_javaExecutableEdit->text().trimmed();
+        if (javaPath.isEmpty()) {
+            const QString selected = QFileDialog::getOpenFileName(this,
+                                                                 QStringLiteral("選擇 Java 執行檔"),
+                                                                 QStringLiteral("C:/Program Files/Java"),
+                                                                 QStringLiteral("java.exe (java.exe);;所有檔案 (*.*)"));
+            if (selected.isEmpty())
+                return;
+            javaPath = selected;
+            m_javaExecutableEdit->setText(javaPath);
+        }
+
         startBtn->setEnabled(false);
-        emit requestRun(m_exportPathEdit->text());
+        emit requestRun(m_exportPathEdit->text(), javaPath);
     });
 
     auto *pathRow = new QHBoxLayout;
     pathRow->addWidget(m_exportPathEdit);
     pathRow->addWidget(browseBtn);
+
+    auto *javaRow = new QHBoxLayout;
+    javaRow->addWidget(new QLabel(QStringLiteral("Java：")));
+    javaRow->addWidget(m_javaExecutableEdit, 1);
+    javaRow->addWidget(javaBrowseBtn);
 
     auto *progressBlock = new QVBoxLayout;
     progressBlock->setSpacing(4);
@@ -290,6 +368,7 @@ RunExportPage::RunExportPage(QWidget *parent) : QWizardPage(parent)
 
     auto *layout = new QVBoxLayout;
     layout->addLayout(pathRow);
+    layout->addLayout(javaRow);
     layout->addWidget(startBtn);
     layout->addSpacing(8);
     layout->addLayout(progressBlock);
@@ -354,7 +433,7 @@ WorldGenWizard::WorldGenWizard(QWidget *parent) : QWizard(parent)
     connect(m_runExportPage, &RunExportPage::requestRun, this, &WorldGenWizard::startPipeline);
 }
 
-void WorldGenWizard::startPipeline(const QString &exportPath)
+void WorldGenWizard::startPipeline(const QString &exportPath, const QString &javaExecutable)
 {
     WorldGenConfig config;
     config.loader = m_loaderPage->selectedLoader();
@@ -369,6 +448,12 @@ void WorldGenWizard::startPipeline(const QString &exportPath)
 
     config.modFiles = m_assetsPage->modFiles();
     config.datapackFiles = m_assetsPage->datapackFiles();
+
+    config.javaExecutable = javaExecutable.trimmed();
+    if (config.javaExecutable.startsWith('"') && config.javaExecutable.endsWith('"') && config.javaExecutable.size() >= 2)
+        config.javaExecutable = config.javaExecutable.mid(1, config.javaExecutable.size() - 2);
+    if (config.javaExecutable.isEmpty())
+        config.javaExecutable = defaultJavaExecutable();
 
     config.exportZipPath = exportPath;
 
