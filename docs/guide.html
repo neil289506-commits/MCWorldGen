@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>使用 / 建置 · MCWorldGen</title><link rel="icon" href="assets/logo.svg"><link rel="stylesheet" href="css/style.css"></head>
+<body><canvas id="bg" data-mode="voxel"></canvas><div class="vignette"></div><div class="glow"></div>
+<nav><a class="logo" href="index.html"><img src="assets/logo.svg" alt="">MCWorldGen</a><a class="l" href="index.html">首頁</a><a class="l" href="features.html">功能</a><a class="l on" href="guide.html">使用 / 建置</a><a class="gh" href="https://github.com/neil289506-commits/mcworldgen" target="_blank" rel="noopener">GitHub ↗</a></nav>
+<section class="page-h"><span class="badge"><i></i>Guide</span><h1 style="font-size:clamp(2.2rem,5vw,4rem);margin-top:16px"><span class="g">使用</span>與建置</h1><p class="lead">從取得、操作到自行編譯。</p></section>
+<section style="padding-top:20px"><h2 class="reveal">使用流程</h2><div class="steps"><div class="step reveal"><h3>選擇載入器與版本</h3><p>Vanilla / Paper 單一選單;Fabric / Quilt 雙獨立選單;Forge / NeoForge 成對選單。</p></div><div class="step reveal"><h3>設定世界</h3><p>世界類型、極限模式、獎勵箱、結構、種子碼。</p></div><div class="step reveal"><h3>選擇 mods / datapack</h3><p>一鍵匯入,自動放入正確資料夾。</p></div><div class="step reveal"><h3>執行並匯出</h3><p>即時 Console 顯示進度,完成後自動打包 zip。</p></div></div></section>
+<section><h2 class="reveal">自行建置</h2><div class="panel reveal"><p class="sub" style="margin-bottom:0">先 clone 專案:</p><pre>git clone https://github.com/neil289506-commits/mcworldgen.git
+cd mcworldgen</pre><pre>vcpkg install
+cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=<vcpkg_root>/scripts/buildsystems/vcpkg.cmake
+cmake --build build --config Release</pre></div></section>
+<section><h2 class="reveal">常見問題</h2><details class="reveal"><summary>需要什麼執行環境?</summary><p>PATH 中要有 Java;另需 Python 3 與 requests 以抓取版本資料(Paper 例外)。</p></details><details class="reveal"><summary>Forge 怎麼啟動?</summary><p>MC ≥ 1.18.1 執行 installer 產生的 run.bat / run.sh,更舊版本啟動 universal jar。</p></details><details class="reveal"><summary>預生成怎麼結束?</summary><p>偵測到 "Done (" 後自動送出 stop 指令。</p></details></section>
+<footer><div class="g">MCWorldGen</div><p>Minecraft 世界預生成工具 · 由 neil289506-commits 開發</p><p><a href="https://github.com/neil289506-commits/mcworldgen" target="_blank" rel="noopener">原始碼</a> · <a href="https://github.com/neil289506-commits/mcworldgen/releases" target="_blank" rel="noopener">Releases</a></p></footer>
+<script src="js/fx.js"></script></body></html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>首頁 · MCWorldGen</title><link rel="icon" href="assets/logo.svg"><link rel="stylesheet" href="css/style.css"></head>
+<body><canvas id="bg" data-mode="voxel"></canvas><div class="vignette"></div><div class="glow"></div>
+<nav><a class="logo" href="index.html"><img src="assets/logo.svg" alt="">MCWorldGen</a><a class="l on" href="index.html">首頁</a><a class="l" href="features.html">功能</a><a class="l" href="guide.html">使用 / 建置</a><a class="gh" href="https://github.com/neil289506-commits/mcworldgen" target="_blank" rel="noopener">GitHub ↗</a></nav>
+<section class="hero"><span class="badge"><i></i>Minecraft 世界預生成工具 · Open Source</span>
+<h1>MCWorldGen<br>自動預生成,<span class="g">打包成完整世界 zip</span></h1><p class="lead">四步驟精靈:選載入器、設定世界、匯入 mods / datapack,自動啟動伺服器預生成並以 BZIP2 打包。</p>
+<div class="cta"><a class="btn p" href="https://github.com/neil289506-commits/mcworldgen/releases" target="_blank" rel="noopener">⬇ 下載</a><a class="btn" href="guide.html">📖 使用說明</a><a class="btn" href="https://github.com/neil289506-commits/mcworldgen" target="_blank" rel="noopener">★ GitHub</a></div>
+<div class="stats"><div><b>6</b><span>種載入器</span></div><div><b>4</b><span>精靈步驟</span></div><div><b>1</b><span>鍵完成</span></div></div></section>
+<div class="marquee"><div><span>Vanilla</span><span>Fabric</span><span>Quilt</span><span>Paper</span><span>Forge</span><span>NeoForge</span><span>QuaZip</span><span>BZIP2</span><span>vcpkg</span><span>server.properties</span><span>datapack</span><span>seed</span><span>Vanilla</span><span>Fabric</span><span>Quilt</span><span>Paper</span><span>Forge</span><span>NeoForge</span><span>QuaZip</span><span>BZIP2</span><span>vcpkg</span><span>server.properties</span><span>datapack</span><span>seed</span></div></div>
+<section id="try"><h2 class="reveal">試玩:程序化世界預覽</h2><p class="sub reveal">輸入種子碼、調整半徑,按下預生成觀看進度。</p>
+<div class="panel reveal" id="demo">
+ <div class="row">
+  <div><label>載入器 Loader</label><select id="ld"><option>Vanilla</option><option>Fabric</option><option>Quilt</option><option>Paper</option><option>Forge</option><option>NeoForge</option></select></div>
+  <div><label>世界類型</label><select id="wt"><option>default</option><option>large biomes</option><option>amplified</option></select></div>
+  <div><label>種子碼 Seed</label><input id="sd" value="neil289506"></div>
+  <div><label>預生成半徑 <span id="rv">24</span> chunks</label><input id="rad" type="range" min="4" max="48" value="24"></div>
+ </div>
+ <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-top:18px" id="cols">
+  <canvas id="map" width="480" height="480" style="width:100%;border-radius:16px;border:1px solid var(--line);image-rendering:pixelated"></canvas>
+  <div><pre id="con" style="margin:0;height:360px;font-size:.75rem"></pre><div class="cta"><button class="btn p" id="go">🌍 開始預生成</button><button class="btn" id="rnd">🎲 隨機種子</button></div></div>
+ </div>
+</div>
+<style>@media(max-width:760px){#cols{grid-template-columns:1fr!important}}</style>
+</section>
+<section><h2 class="reveal">核心功能</h2><p class="sub reveal">一眼看懂 MCWorldGen 能做什麼。</p><div class="grid"><div class="card reveal"><div class="ic">🧭</div><h3>四步驟精靈</h3><p>Loader → 世界類型 → 資源匯入 → 執行與匯出。</p></div><div class="card reveal"><div class="ic">⬇</div><h3>自動安裝核心</h3><p>下載並安裝對應載入器伺服器核心到暫存資料夾,解析啟動指令。</p></div><div class="card reveal"><div class="ic">🌱</div><h3>世界設定</h3><p>世界類型、極限模式、獎勵箱、結構生成、種子碼。</p></div><div class="card reveal"><div class="ic">📦</div><h3>一鍵匯入資源</h3><p>mods 複製到 mods/,datapack 複製到 level/datapacks/。</p></div><div class="card reveal"><div class="ic">📺</div><h3>即時 Console</h3><p>轉發伺服器輸出,偵測 Done 後自動送出 stop。</p></div><div class="card reveal"><div class="ic">🗜</div><h3>BZIP2 打包</h3><p>以 QuaZip 的 BZIP2 method 打成使用者指定的 zip。</p></div></div>
+<div class="cta" style="margin-top:34px"><a class="btn" href="features.html">查看全部功能 →</a></div></section>
+<section><div class="panel reveal" style="text-align:center;padding:60px 28px"><h2>準備好了嗎?</h2><p class="sub" style="margin:0 auto 24px">前往 GitHub 取得最新版本,或自行從原始碼建置。</p><div class="cta" style="justify-content:center"><a class="btn p" href="https://github.com/neil289506-commits/mcworldgen" target="_blank" rel="noopener">前往 GitHub</a><a class="btn" href="guide.html">建置教學</a></div></div></section>
+<footer><div class="g">MCWorldGen</div><p>Minecraft 世界預生成工具 · 由 neil289506-commits 開發</p><p><a href="https://github.com/neil289506-commits/mcworldgen" target="_blank" rel="noopener">原始碼</a> · <a href="https://github.com/neil289506-commits/mcworldgen/releases" target="_blank" rel="noopener">Releases</a></p></footer>
+<script src="js/fx.js"></script><script src="js/demo.js"></script></body></html>
